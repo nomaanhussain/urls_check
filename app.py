@@ -16,10 +16,11 @@ def process(links):
 
 @app.route("/", methods=['GET'])
 def process_all():
+    if threading.active_count() > 3:
+        return jsonify({"message": "Threads are busy."})
     links = []
     with open('links.txt') as f:
         links = [line.rstrip() for line in f]
-    print(links)
     thr = threading.Thread(target=process, args=(links,))
     thr.start()
     return jsonify({"message": "Process is started."})
@@ -27,6 +28,8 @@ def process_all():
 
 @app.route("/", methods=['POST'])
 def process_some():
+    if threading.active_count() > 3:
+        return jsonify({"message": "Threads are busy."})
     if request.method == "POST":
         body = json.loads(request.data)
         links = body['urls']
