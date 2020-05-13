@@ -12,20 +12,17 @@ def process(links):
     in_process = True
     urls = []
     for link in links: 
-        print(link)
         r = requests.get(link)
-        print("Status", r.status_code)
         if r.status_code == 404:
             urls.append(link)
     in_process = False
     
 
-@app.route("/", methods=['GET'])
+@app.route("/run", methods=['GET'])
 def process_all():
     global in_process
     if in_process:
         return jsonify({"message": "Threads are busy."})
-    links = []
     with open('links.txt') as f:
         links = [line.rstrip() for line in f]
     thr = threading.Thread(target=process, args=(links,))
@@ -33,24 +30,17 @@ def process_all():
     print(in_process)
     return jsonify({"message": "Process is started."})
 
-
-@app.route("/", methods=['POST'])
-def process_some():
-    global in_process
-    if in_process:
-        return jsonify({"message": "Threads are busy."})
-    if request.method == "POST":
-        body = json.loads(request.data)
-        links = body['urls']
-        thr = threading.Thread(target=process, args=(links,))
-        thr.start()
-    return jsonify({"message": "Process is started."})
+@app.route("/urls", methods=['GET'])
+def get_urls():
+    with open('links.txt') as f:
+        links = [line.rstrip() for line in f]
+    return jsonify(links)
 
 
-@app.route("/status", methods=['GET'])
+@app.route("/404", methods=['GET'])
 def status():
     global urls
-    return jsonify({"url": urls})
+    return jsonify(urls)
 
 
 @app.route("/add_links", methods=['POST'])
