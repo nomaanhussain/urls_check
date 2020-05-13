@@ -28,6 +28,7 @@ def process_all():
 
 @app.route("/", methods=['POST'])
 def process_some():
+    print("ss", threading.active_count())
     if threading.active_count() > 3:
         return jsonify({"message": "Threads are busy."})
     if request.method == "POST":
