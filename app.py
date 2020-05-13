@@ -1,4 +1,5 @@
-import requests, json, threading
+import requests, json, threading, xlrd
+import pandas as pd
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
@@ -13,22 +14,36 @@ def process(links):
     urls = []
     for link in links: 
         r = requests.get(link)
+        print(r.status_code)
         if r.status_code == 404:
             urls.append(link)
     in_process = False
+
+@app.route('/')
+def index():
+    return render_template('index.html')
     
 
-@app.route("/run", methods=['GET'])
+@app.route("/run", methods=['POST'])
 def process_all():
-    global in_process
-    if in_process:
-        return jsonify({"message": "Threads are busy."})
-    with open('links.txt') as f:
-        links = [line.rstrip() for line in f]
-    thr = threading.Thread(target=process, args=(links,))
-    thr.start()
-    print(in_process)
-    return jsonify({"message": "Process is started."})
+    # global in_process
+    # if in_process:
+    #     return jsonify({"message": "Threads are busy."})
+    f = request.files['file'] 
+  
+    # loc = ("path of file")
+    links = [] 
+    data = pd.read_excel(f)
+    for index, row in data.iterrows(): 
+        links.append(row["Target URL"])
+    process(links)
+        # print(sheet.cell_value(i, 1)) 
+    # with open('links.txt') as f:
+    #     links = [line.rstrip() for line in f]
+    # thr = threading.Thread(target=process, args=(links,))
+    # thr.start()
+    # print(in_process)
+    return jsonify({"message": urls})
 
 @app.route("/urls", methods=['GET'])
 def get_urls():
