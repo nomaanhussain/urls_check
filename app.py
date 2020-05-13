@@ -14,6 +14,7 @@ def process(links):
     for link in links: 
         print(link)
         r = requests.get(link)
+        print("Status", r.status_code)
         if r.status_code == 404:
             urls.append(link)
     in_process = False
