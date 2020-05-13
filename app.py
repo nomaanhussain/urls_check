@@ -40,8 +40,11 @@ def get_urls():
 @app.route("/404", methods=['GET'])
 def status():
     global urls
-    return jsonify(urls)
-
+    global in_process
+    if in_process:
+        return jsonify({"message": "In Process"})
+    else:
+        return jsonify(urls)
 
 @app.route("/add_links", methods=['POST'])
 def add_entries():
