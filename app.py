@@ -28,6 +28,7 @@ def process_all():
         links = [line.rstrip() for line in f]
     thr = threading.Thread(target=process, args=(links,))
     thr.start()
+    print(in_process)
     return jsonify({"message": "Process is started."})
 
 
