@@ -20,6 +20,7 @@ def process(links):
 
 @app.route("/", methods=['GET'])
 def process_all():
+    global in_process
     if in_process:
         return jsonify({"message": "Threads are busy."})
     links = []
@@ -32,6 +33,7 @@ def process_all():
 
 @app.route("/", methods=['POST'])
 def process_some():
+    global in_process
     if in_process:
         return jsonify({"message": "Threads are busy."})
     if request.method == "POST":
