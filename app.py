@@ -1,5 +1,5 @@
-import xlrd, requests, json, threading
-from flask import Flask, render_template, request
+import requests, json, threading
+from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
@@ -22,7 +22,7 @@ def process_all():
     print(links)
     thr = threading.Thread(target=process, args=(links,))
     thr.start()
-    return {"message": "Process is started."}
+    return jsonify({"message": "Process is started."})
 
 
 @app.route("/", methods=['POST'])
@@ -32,13 +32,13 @@ def process_some():
         links = body['urls']
         thr = threading.Thread(target=process, args=(links,))
         thr.start()
-    return {"message": "Process is started."}
+    return jsonify({"message": "Process is started."})
 
 
 @app.route("/status", methods=['GET'])
 def status():
     global urls
-    return {"url": urls}
+    return jsonify({"url": urls})
 
 
 @app.route("/add_links", methods=['POST'])
@@ -51,7 +51,7 @@ def add_entries():
             file_object.write(link)
             file_object.write("\n")
         file_object.close()
-    return {"message": "Entries has been inserted."}
+    return jsonify({"message": "Entries has been inserted."})
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5003)
