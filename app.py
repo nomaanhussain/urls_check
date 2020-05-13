@@ -43,7 +43,7 @@ def process_all():
     # thr = threading.Thread(target=process, args=(links,))
     # thr.start()
     # print(in_process)
-    return jsonify({"message": urls})
+    return jsonify({"404_urls": urls})
 
 @app.route("/urls", methods=['GET'])
 def get_urls():
